@@ -37,6 +37,9 @@ exports.initsocket = (server) => {
 
       const result = await redisClient.HGET('user_socket', socket_id);
       console.log("print resukt: " + result);
+      if (result == null) {
+       return; 
+      }
       await redisClient.HSET(result, 'online', '0');
     });
 
