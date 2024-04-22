@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   admin_server:
-    container_name: poker_admin
+    container_name: heart_of_zeta
     build: .
     volumes: 
       - ./:/usr/src/app
@@ -18,7 +18,7 @@ services:
       - "webnet"  
 
   redis:
-    container_name: poker_redis
+    container_name: heart_of_zeta_redis
     image: redis:alpine
     command: redis-server --requirepass A2Dp/B0+b8BGpidH8I2FmBnSqAvFZeFNiDQezT6zQISEsK5V3wWQhDTtDM2mRKNacnA1KH8pWp9K4/Kg
     ports:

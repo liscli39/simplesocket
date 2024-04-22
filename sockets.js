@@ -11,7 +11,16 @@ exports.initsocket = (server) => {
   io.on('connection', (socket) => {
     const socket_id = socket.id;
 
+    const ipAddress = socket.handshake.address;
+
+    console.log("New connection from: "+ ipAddress); 
+
     socket.on('login', async (login_id) => {
+      // const result = await redisClient.HGET('user_socket', socket_id);
+      const ne2data = await redisClient.HGETALL(login_id);
+      console.log(ne2data);
+
+
       await redisClient.MULTI()
         .HSET(login_id, 'online', '1')
         .HSET(login_id, 'socket_id', socket_id)
@@ -19,10 +28,13 @@ exports.initsocket = (server) => {
         .EXEC();
 
       const data = await redisClient.HGETALL(login_id);
-      socket.emit('get_user', data);
+      socket.emit('set_user', data);
     });
 
     socket.on('disconnect', async () => {
+      const ipAddress = socket.handshake.address;
+      console.log("disconnect from: "+ ipAddress); 
+
       const result = await redisClient.HGET('user_socket', socket_id);
       console.log("print resukt: " + result);
       await redisClient.HSET(result, 'online', '0');
@@ -33,6 +45,11 @@ exports.initsocket = (server) => {
       socket.emit('get_user', data);
     });
 
+
+    socket.on('set_user', async (login_id) => {
+      const data = await redisClient.HGETALL(login_id);
+      socket.emit('set_user', data);
+    });
     // -----------------
     socket.on("rpc", async (req) => {
       // call o day
