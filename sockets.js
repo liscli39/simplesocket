@@ -69,7 +69,7 @@ exports.initsocket = (server) => {
 
 
     socket.on('get_user', async (login_id) => {
-      const data = await redisClient.HGETALL(login_id);
+      var data = await redisClient.HGETALL(login_id);
       console.log(data);
 
       if (!data['online']) {
