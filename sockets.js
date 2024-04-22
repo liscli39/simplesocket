@@ -70,6 +70,7 @@ exports.initsocket = (server) => {
     socket.on('get_user', async (login_id) => {
       const data = await redisClient.HGETALL(login_id);
       console.log(data);
+      console.log(sRealValue(data));
       if (!isRealValue(data)) {
 
         console.log("vao day ne");
@@ -78,6 +79,7 @@ exports.initsocket = (server) => {
         .HSET(login_id, 'socket_id', socket_id)
         .HSET('user_socket', socket_id, login_id)
          data = await redisClient.HGETALL(login_id);
+ 
 
       }
       socket.emit('get_user', data);
