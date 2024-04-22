@@ -69,6 +69,14 @@ exports.initsocket = (server) => {
 
     socket.on('get_user', async (login_id) => {
       const data = await redisClient.HGETALL(login_id);
+      if (data == null) {
+        await redisClient.MULTI()
+        .HSET(login_id, 'online', '0')
+        .HSET(login_id, 'socket_id', socket_id)
+        .HSET('user_socket', socket_id, login_id)
+         data = await redisClient.HGETALL(login_id);
+
+      }
       socket.emit('get_user', data);
     });
 
