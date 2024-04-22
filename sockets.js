@@ -72,7 +72,7 @@ exports.initsocket = (server) => {
       const data = await redisClient.HGETALL(login_id);
       console.log(data);
 
-      if (Object.keys(data).length === 0 && data.constructor === Object) {
+      if (!data['online']) {
 
         console.log("vao day ne");
         await redisClient.MULTI()
@@ -80,8 +80,9 @@ exports.initsocket = (server) => {
         .HSET(login_id, 'socket_id', socket_id)
         .HSET('user_socket', socket_id, login_id)
          data = await redisClient.HGETALL(login_id);
- 
+         socket.emit('get_user', data);
 
+       return;
       }
       socket.emit('get_user', data);
     });
