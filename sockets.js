@@ -74,7 +74,7 @@ exports.initsocket = (server) => {
       if (!data['online']) {
 
         await redisClient.MULTI()
-        .HSET(login_id, 'online', '1')
+        .HSET(login_id, 'online', '0')
         .HSET(login_id, 'socket_id', socket_id)
         .HSET('user_socket', socket_id, login_id)
         .EXEC();
