@@ -71,6 +71,8 @@ exports.initsocket = (server) => {
       const data = await redisClient.HGETALL(login_id);
       console.log(data);
       if (!data) {
+
+        console.log("vao day ne");
         await redisClient.MULTI()
         .HSET(login_id, 'online', '0')
         .HSET(login_id, 'socket_id', socket_id)
