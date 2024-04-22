@@ -60,7 +60,7 @@ exports.initsocket = (server) => {
       }
       await redisClient.HSET(result, 'online', '0');
 
-      const data = await redisClient.HGETALL(login_id);
+      const data = await redisClient.HGETALL(result);
 
       socket.emit('end_login', data);
 
