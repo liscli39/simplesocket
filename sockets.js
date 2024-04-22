@@ -70,7 +70,7 @@ exports.initsocket = (server) => {
     socket.on('get_user', async (login_id) => {
       const data = await redisClient.HGETALL(login_id);
       console.log(data);
-      if (!data) {
+      if (!isRealValue(data)) {
 
         console.log("vao day ne");
         await redisClient.MULTI()
@@ -82,7 +82,10 @@ exports.initsocket = (server) => {
       }
       socket.emit('get_user', data);
     });
-
+    function isRealValue(obj)
+    {
+     return obj && obj !== 'null' && obj !== 'undefined';
+    }
 
     socket.on('set_user', async (login_id,c) => {
       const data = await redisClient.HGETALL(login_id);
