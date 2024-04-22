@@ -24,6 +24,7 @@ exports.initsocket = (server) => {
 
     socket.on('disconnect', async () => {
       const result = await redisClient.HGET('user_socket', socket_id);
+      console.log("print resukt: " + result);
       await redisClient.HSET(result, 'online', '0');
     });
 
