@@ -18,8 +18,6 @@ exports.initsocket = (server) => {
 
     socket.on('login', async (login_id) => {
       // const result = await redisClient.HGET('user_socket', socket_id);
-      const ne2data = await redisClient.HGETALL(login_id);
-      console.log(ne2data);
 
 
       await redisClient.MULTI()
@@ -80,10 +78,8 @@ exports.initsocket = (server) => {
         .HSET(login_id, 'socket_id', socket_id)
         .HSET('user_socket', socket_id, login_id)
          data = await redisClient.HGETALL(login_id);
-         socket.emit('get_user', data);
-
-       return;
       }
+      console.log(data);
       socket.emit('get_user', data);
     });
   
