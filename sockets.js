@@ -71,10 +71,8 @@ exports.initsocket = (server) => {
     socket.on('get_user', async (login_id) => {
       const data = await redisClient.HGETALL(login_id);
       console.log(data);
-      var isrel =data && data !== 'null' && data !== 'undefined'
-      console.log(isrel);
 
-      if (!isrel) {
+      if (Object.keys(data).length === 0 && data.constructor === Object) {
 
         console.log("vao day ne");
         await redisClient.MULTI()
