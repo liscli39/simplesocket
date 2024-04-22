@@ -43,16 +43,41 @@ exports.initsocket = (server) => {
       await redisClient.HSET(result, 'online', '0');
     });
 
+
+    socket.on('end_login', async () => {
+      const ipAddress = socket.handshake.address;
+      console.log("disconnect from: "+ ipAddress); 
+
+      const result = await redisClient.HGET('user_socket', socket_id).catch(err => {
+
+
+        console.log(err);
+
+      });
+      console.log(result);
+      if (result == null) {
+       return; 
+      }
+      await redisClient.HSET(result, 'online', '0');
+
+      const data = await redisClient.HGETALL(login_id);
+
+      socket.emit('end_login', data);
+
+    });
+
+
     socket.on('get_user', async (login_id) => {
       const data = await redisClient.HGETALL(login_id);
       socket.emit('get_user', data);
     });
 
 
-    socket.on('set_user', async (login_id) => {
+    socket.on('set_user', async (login_id,c) => {
       const data = await redisClient.HGETALL(login_id);
       socket.emit('set_user', data);
     });
+    
     // -----------------
     socket.on("rpc", async (req) => {
       // call o day
