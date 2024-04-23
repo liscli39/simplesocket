@@ -76,6 +76,7 @@ exports.initsocket = (server) => {
       if (!user_socketArray.includes(socket_id)) {
         user_socketArray.push(socket_id);
       }
+      console.log(`user_socketArray length ${user_socketArray}`);
       if (user_socketArray.length > 1) {
         console.log(`duplicate login ${user_socketArray}`);
 
