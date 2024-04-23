@@ -15,7 +15,7 @@ exports.initsocket = (server) => {
     const ipAddress = socket.handshake.address;
 
 
-    console.log(`${user_socketArray}`);
+    // console.log(`${user_socketArray}`);
 
     console.log("New connection from: " + ipAddress);
 
@@ -40,7 +40,7 @@ exports.initsocket = (server) => {
     socket.on('disconnect', async () => {
       const ipAddress = socket.handshake.address;
 
-      user_socketArray = [];
+      // user_socketArray = [];
 
       const result = await redisClient.HGET('user_socket', socket_id);
       if (result == null) {
