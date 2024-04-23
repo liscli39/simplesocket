@@ -81,7 +81,7 @@ exports.initsocket = (server) => {
       //     // user_socketArray.push(socket_id);
       //     redisClient.a
       // }
-
+       const key = `user_socketArray:${login_id}`;
       console.log("kakasdadasdsadakaka");
 
       // await redisClient.exists(`user_socketArray:${login_id}`, function(err, reply) {
@@ -94,7 +94,7 @@ exports.initsocket = (server) => {
       // });
 
       try {
-        const result =    await redisClient.RPUSH(`user_socketArray:${login_id}`, socket_id);
+        const result =    await redisClient.RPUSH(key, socket_id);
         console.log(`user_socketArray:${login_id}`);
 
         // var arrayData = await redisClient.GET(`user_socketArray:${login_id}`);
@@ -103,6 +103,13 @@ exports.initsocket = (server) => {
     } catch (error) {
         console.error(error);
     }
+
+    try {
+      const result2 = await redis.lrange(key, 0, -1);
+      result2.forEach(v => console.log(v));
+  } catch (error) {
+      console.error(error);
+  }
 
       // console.log(`user_socketArray length ${user_socketArray}`);
       // console.log(`user_socketArray count ${user_socketArray.length}`);
