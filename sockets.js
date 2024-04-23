@@ -105,7 +105,7 @@ exports.initsocket = (server) => {
     }
 
     try {
-      const result2 = await redisClient.lrange(key, 0, -1);
+      const result2 = await redisClient.lRange(key, 0, -1);
       result2.forEach(v => console.log(v));
   } catch (error) {
       console.error(error);
