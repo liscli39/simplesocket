@@ -66,7 +66,7 @@ exports.initsocket = (server) => {
       const data = await redisClient.HGETALL(result);
 
       console.log(`endlogin from: ${ipAddress} - title id: ${result}`);
-      user_socketArray = [];
+      // user_socketArray = [];
 
       socket.emit('end_login', data);
 
@@ -75,12 +75,12 @@ exports.initsocket = (server) => {
 
     socket.on('get_user', async (login_id) => {
       var data = await redisClient.HGETALL(login_id);
-      var user_socketArray = redisClient.get("user_socketArray");
+      // var user_socketArray = redisClient.get("user_socketArray");
 
-      if (!user_socketArray.indexOf(socket_id) != -1) {
-          // user_socketArray.push(socket_id);
-          redisClient.a
-      }
+      // if (!user_socketArray.indexOf(socket_id) != -1) {
+      //     // user_socketArray.push(socket_id);
+      //     redisClient.a
+      // }
 
       redisClient.exists(`user_socketArray${login_id}`, function(err, reply) {
         if (reply === 1) {
