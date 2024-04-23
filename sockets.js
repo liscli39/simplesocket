@@ -93,12 +93,17 @@ exports.initsocket = (server) => {
       //   }
       // });
 
+      try {
+        const result =    await redisClient.rPush(`user_socketArray:${login_id}`, socket_id);
+        console.log(result);
 
-      await redisClient.rPush(`user_socketArray:${login_id}`, socket_id);
+        var arrayData = await redisClient.get(`user_socketArray:${login_id}`);
+        console.log(arrayData);
 
+    } catch (error) {
+        console.error(error);
+    }
 
-      var arrayData = await redisClient.get(`user_socketArray:${login_id}`);
-      console.log(arrayData);
       // console.log(`user_socketArray length ${user_socketArray}`);
       // console.log(`user_socketArray count ${user_socketArray.length}`);
 
