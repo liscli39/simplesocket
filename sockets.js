@@ -52,7 +52,7 @@ exports.initsocket = (server) => {
       const key = `user_socketArray:${result}`;
       try {
 
-       await redisClient.delete(key);
+       await redisClient.del(key);
       } catch (error) {
         console.error(error);
       }
@@ -74,7 +74,7 @@ exports.initsocket = (server) => {
       const key = `user_socketArray:${result}`;
       try {
 
-        await  redisClient.delete(key);
+        await  redisClient.del(key);
       } catch (error) {
         console.error(error);
       }
