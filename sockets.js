@@ -13,7 +13,10 @@ exports.initsocket = (server) => {
     const socket_id = socket.id;
 
     const ipAddress = socket.handshake.address;
-    var user_socketArray = [];
+
+
+    var user_socketArray = redisClient.get("user_socketArray");
+    console.log(`${user_socketArray}`);
 
     console.log("New connection from: " + ipAddress);
 
@@ -73,10 +76,12 @@ exports.initsocket = (server) => {
     socket.on('get_user', async (login_id) => {
       var data = await redisClient.HGETALL(login_id);
 
-      if (!user_socketArray.includes(socket_id)) {
-        user_socketArray.push(socket_id);
+      if (!user_socketArray.indexOf(socket_id) != -1) {
+          user_socketArray.push(socket_id);
       }
       console.log(`user_socketArray length ${user_socketArray}`);
+      console.log(`user_socketArray count ${user_socketArray.length}`);
+
       if (user_socketArray.length > 1) {
         console.log(`duplicate login ${user_socketArray}`);
 
