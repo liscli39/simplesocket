@@ -28,7 +28,7 @@ exports.initsocket = (server) => {
 
       const data = await redisClient.HGETALL(login_id);
 
-      console.log("New login from title : "+ data); 
+      console.log(`New login from title :${data}`); 
 
       socket.emit('set_user', data);
     });
@@ -40,7 +40,7 @@ exports.initsocket = (server) => {
       if (result == null) {
        return; 
       }
-      console.log("disconnect from: "+ ipAddress + "title id: " + result); 
+      console.log(`disconnect from: ${ipAddress} - title id: ${result}`); 
 
       await redisClient.HSET(result, 'online', '0');
     });
@@ -59,7 +59,7 @@ exports.initsocket = (server) => {
 
       const data = await redisClient.HGETALL(result);
 
-      console.log("endlogin from: "+ ipAddress + "title id: " + result); 
+      console.log(`endlogin from: ${ipAddress} - title id: ${result}`); 
 
       socket.emit('end_login', data);
 
