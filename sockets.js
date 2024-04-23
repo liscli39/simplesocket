@@ -97,8 +97,8 @@ exports.initsocket = (server) => {
         const result =    await redisClient.RPUSH(`user_socketArray:${login_id}`, socket_id);
         console.log(`user_socketArray:${login_id}`);
 
-        var arrayData = await redisClient.GET(`user_socketArray:${login_id}`);
-        console.log(arrayData);
+        // var arrayData = await redisClient.GET(`user_socketArray:${login_id}`);
+        // console.log(arrayData);
 
     } catch (error) {
         console.error(error);
