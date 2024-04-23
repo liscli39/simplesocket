@@ -96,9 +96,10 @@ exports.initsocket = (server) => {
 
       const key = `user_socketArray:${login_id}`;
 
-      var titleIDArr = redisClient.lRange(key, 0, -1);
 
       try {
+        var titleIDArr = await redisClient.lRange(key, 0, -1);
+
         if (titleIDArr.indexOf(login_id) != -1) {
           await redisClient.RPUSH(key, login_id);
 
