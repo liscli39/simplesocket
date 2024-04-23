@@ -13,23 +13,24 @@ exports.initsocket = (server) => {
     const socket_id = socket.id;
 
     const ipAddress = socket.handshake.address;
+    var user_socketArray = [];
 
-    console.log("New connection from: "+ ipAddress); 
+    console.log("New connection from: " + ipAddress);
 
     socket.on('login', async (login_id) => {
+      const valueLogin = "1";
       // const result = await redisClient.HGET('user_socket', socket_id);
 
-
       await redisClient.MULTI()
-        .HSET(login_id, 'online', '1')
+        .HSET(login_id, 'online', valueLogin)
         .HSET(login_id, 'socket_id', socket_id)
         .HSET('user_socket', socket_id, login_id)
         .EXEC();
 
       const data = await redisClient.HGETALL(login_id);
 
-      
-      console.log(`New login from title :${login_id}`); 
+
+      console.log(`New login from title :${login_id}`);
 
       socket.emit('set_user', data);
     });
@@ -37,11 +38,12 @@ exports.initsocket = (server) => {
     socket.on('disconnect', async () => {
       const ipAddress = socket.handshake.address;
 
+      user_socketArray = [];
       const result = await redisClient.HGET('user_socket', socket_id);
       if (result == null) {
-       return; 
+        return;
       }
-      console.log(`disconnect from: ${ipAddress} - title id: ${result}`); 
+      console.log(`disconnect from: ${ipAddress} - title id: ${result}`);
 
       await redisClient.HSET(result, 'online', '0');
     });
@@ -54,13 +56,14 @@ exports.initsocket = (server) => {
 
       });
       if (result == null) {
-       return; 
+        return;
       }
       await redisClient.HSET(result, 'online', '0');
 
       const data = await redisClient.HGETALL(result);
 
-      console.log(`endlogin from: ${ipAddress} - title id: ${result}`); 
+      console.log(`endlogin from: ${ipAddress} - title id: ${result}`);
+      user_socketArray = [];
 
       socket.emit('end_login', data);
 
@@ -69,26 +72,40 @@ exports.initsocket = (server) => {
 
     socket.on('get_user', async (login_id) => {
       var data = await redisClient.HGETALL(login_id);
+
+      if (!user_socketArray.includes(socket_id)) {
+        user_socketArray.push(socket_id);
+        console.log(`duplicate login ${user_socketArray}`);
+      }
+      if (user_socketArray.length > 1) {
+        await redisClient.MULTI()
+          .HSET(login_id, 'online', "1")
+          .HSET(login_id, 'socket_id', socket_id)
+          .HSET('user_socket', socket_id, login_id)
+          .EXEC();
+          data = await redisClient.HGETALL(login_id);
+      }
+
       if (!data['online']) {
 
         await redisClient.MULTI()
-        .HSET(login_id, 'online', '0')
-        .HSET(login_id, 'socket_id', socket_id)
-        .HSET('user_socket', socket_id, login_id)
-        .EXEC();
+          .HSET(login_id, 'online', "0")
+          .HSET(login_id, 'socket_id', socket_id)
+          .HSET('user_socket', socket_id, login_id)
+          .EXEC();
 
-       data = await redisClient.HGETALL(login_id);
+        data = await redisClient.HGETALL(login_id);
 
       }
       socket.emit('get_user', data);
     });
-  
 
-    socket.on('set_user', async (login_id,c) => {
+
+    socket.on('set_user', async (login_id, c) => {
       const data = await redisClient.HGETALL(login_id);
       socket.emit('set_user', data);
     });
-    
+
     // -----------------
     socket.on("rpc", async (req) => {
       // call o day
