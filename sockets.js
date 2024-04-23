@@ -27,39 +27,39 @@ exports.initsocket = (server) => {
         .EXEC();
 
       const data = await redisClient.HGETALL(login_id);
+
+      console.log("New login from title : "+ data); 
+
       socket.emit('set_user', data);
     });
 
     socket.on('disconnect', async () => {
       const ipAddress = socket.handshake.address;
-      console.log("disconnect from: "+ ipAddress); 
 
       const result = await redisClient.HGET('user_socket', socket_id);
-      console.log("print resukt: " + result);
       if (result == null) {
        return; 
       }
+      console.log("disconnect from: "+ ipAddress + "title id: " + result); 
+
       await redisClient.HSET(result, 'online', '0');
     });
 
 
     socket.on('end_login', async () => {
       const ipAddress = socket.handshake.address;
-      console.log("disconnect from: "+ ipAddress); 
 
       const result = await redisClient.HGET('user_socket', socket_id).catch(err => {
 
-
-        console.log(err);
-
       });
-      console.log(result);
       if (result == null) {
        return; 
       }
       await redisClient.HSET(result, 'online', '0');
 
       const data = await redisClient.HGETALL(result);
+
+      console.log("endlogin from: "+ ipAddress + "title id: " + result); 
 
       socket.emit('end_login', data);
 
@@ -68,9 +68,6 @@ exports.initsocket = (server) => {
 
     socket.on('get_user', async (login_id) => {
       var data = await redisClient.HGETALL(login_id);
-      console.log(data);
-      console.log(login_id);
-
       if (!data['online']) {
 
         await redisClient.MULTI()
@@ -82,7 +79,6 @@ exports.initsocket = (server) => {
        data = await redisClient.HGETALL(login_id);
 
       }
-      console.log(data);
       socket.emit('get_user', data);
     });
   
