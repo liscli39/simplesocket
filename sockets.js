@@ -100,16 +100,16 @@ exports.initsocket = (server) => {
 
 
       try {
-        // var titleIDArr = await redisClient.lRange(key, 0, -1);
+        var titleIDArr = await redisClient.lRange(key, 0, -1);
 
-        // if (titleIDArr.indexOf(login_id) != -1) {
-          await redisClient.RPUSH(key, login_id);
+        if (titleIDArr.indexOf(socket_id) != -1) {
+          await redisClient.RPUSH(key, socket_id);
 
       
-          console.log(login_id);
+          console.log(socket_id);
           const veggies = await redisClient.lRange(key, 0, -1);
           veggies.forEach(v => console.log(v));
-        // }
+        }
       } catch (error) {
         console.error(error);
       }
