@@ -105,26 +105,26 @@ exports.initsocket = (server) => {
         if (titleIDArr.indexOf(login_id) != -1) {
           await redisClient.RPUSH(key, login_id);
 
-          var titleIDArr = redisClient.lRange(key, 0, -1);
-          if (titleIDArr.length > 1) {
-            await redisClient.MULTI()
-              .HSET(login_id, 'online', "1")
-              .HSET(login_id, 'socket_id', socket_id)
-              .HSET('user_socket', socket_id, login_id)
-              .EXEC();
-            data = await redisClient.HGETALL(login_id);
-
-            socket.emit('get_user', data);
-
-            return;
-
-          }
+      
 
         }
       } catch (error) {
         console.error(error);
       }
+      var titleIDArr = await redisClient.lRange(key, 0, -1);
+      if (titleIDArr.length > 1) {
+        await redisClient.MULTI()
+          .HSET(login_id, 'online', "1")
+          .HSET(login_id, 'socket_id', socket_id)
+          .HSET('user_socket', socket_id, login_id)
+          .EXEC();
+        data = await redisClient.HGETALL(login_id);
 
+        socket.emit('get_user', data);
+
+        return;
+
+      }
       if (!data['online']) {
 
         await redisClient.MULTI()
