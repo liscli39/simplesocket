@@ -84,14 +84,21 @@ exports.initsocket = (server) => {
 
       console.log("kakasdadasdsadakaka");
 
-      await redisClient.exists(`user_socketArray:${login_id}`, function(err, reply) {
-        console.log("kakakaka");
-        if (reply === 1) {
-          console.log('Exists!');
-        } else {
-          console.log('Doesn\'t exist!');
-        }
-      });
+      // await redisClient.exists(`user_socketArray:${login_id}`, function(err, reply) {
+      //   console.log("kakakaka");
+      //   if (reply === 1) {
+      //     console.log('Exists!');
+      //   } else {
+      //     console.log('Doesn\'t exist!');
+      //   }
+      // });
+
+
+      await redisClient.rPush(`user_socketArray:${login_id}`, socket_id);
+
+
+      var arrayData = await redisClient.HGETALL(`user_socketArray:${login_id}`);
+      console.log(arrayData);
       // console.log(`user_socketArray length ${user_socketArray}`);
       // console.log(`user_socketArray count ${user_socketArray.length}`);
 
