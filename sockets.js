@@ -15,7 +15,6 @@ exports.initsocket = (server) => {
     const ipAddress = socket.handshake.address;
 
 
-    var user_socketArray = redisClient.get("user_socketArray");
     console.log(`${user_socketArray}`);
 
     console.log("New connection from: " + ipAddress);
@@ -42,6 +41,7 @@ exports.initsocket = (server) => {
       const ipAddress = socket.handshake.address;
 
       user_socketArray = [];
+
       const result = await redisClient.HGET('user_socket', socket_id);
       if (result == null) {
         return;
@@ -75,27 +75,37 @@ exports.initsocket = (server) => {
 
     socket.on('get_user', async (login_id) => {
       var data = await redisClient.HGETALL(login_id);
+      var user_socketArray = redisClient.get("user_socketArray");
 
       if (!user_socketArray.indexOf(socket_id) != -1) {
-          user_socketArray.push(socket_id);
+          // user_socketArray.push(socket_id);
+          redisClient.a
       }
-      console.log(`user_socketArray length ${user_socketArray}`);
-      console.log(`user_socketArray count ${user_socketArray.length}`);
 
-      if (user_socketArray.length > 1) {
-        console.log(`duplicate login ${user_socketArray}`);
+      redisClient.exists(`user_socketArray${login_id}`, function(err, reply) {
+        if (reply === 1) {
+          console.log('Exists!');
+        } else {
+          console.log('Doesn\'t exist!');
+        }
+      });
+      // console.log(`user_socketArray length ${user_socketArray}`);
+      // console.log(`user_socketArray count ${user_socketArray.length}`);
 
-        await redisClient.MULTI()
-          .HSET(login_id, 'online', "1")
-          .HSET(login_id, 'socket_id', socket_id)
-          .HSET('user_socket', socket_id, login_id)
-          .EXEC();
-          data = await redisClient.HGETALL(login_id);
+      // if (user_socketArray.length > 1) {
+      //   console.log(`duplicate login ${user_socketArray}`);
 
-          socket.emit('get_user', data);
+      //   await redisClient.MULTI()
+      //     .HSET(login_id, 'online', "1")
+      //     .HSET(login_id, 'socket_id', socket_id)
+      //     .HSET('user_socket', socket_id, login_id)
+      //     .EXEC();
+      //     data = await redisClient.HGETALL(login_id);
 
-          return;
-      }
+      //     socket.emit('get_user', data);
+
+      //     return;
+      // }
 
       if (!data['online']) {
 
