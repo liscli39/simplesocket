@@ -106,6 +106,7 @@ exports.initsocket = (server) => {
           await redisClient.RPUSH(key, login_id);
 
       
+          console.log(login_id);
 
         }
       } catch (error) {
@@ -121,6 +122,7 @@ exports.initsocket = (server) => {
         data = await redisClient.HGETALL(login_id);
 
         socket.emit('get_user', data);
+        console.log("duplicate");
 
         return;
 
