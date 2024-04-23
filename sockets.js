@@ -100,19 +100,22 @@ exports.initsocket = (server) => {
 
 
       try {
-        var titleIDArr = await redisClient.lRange(key, 0, -1);
+        // var titleIDArr = await redisClient.lRange(key, 0, -1);
 
-        if (titleIDArr.indexOf(login_id) != -1) {
+        // if (titleIDArr.indexOf(login_id) != -1) {
           await redisClient.RPUSH(key, login_id);
 
       
           console.log(login_id);
-
-        }
+          const veggies = await redisClient.lRange(key, 0, -1);
+          veggies.forEach(v => console.log(v));
+        // }
       } catch (error) {
         console.error(error);
       }
       var titleIDArr = await redisClient.lRange(key, 0, -1);
+      console.log(titleIDArr.length);
+
       if (titleIDArr.length > 1) {
         await redisClient.MULTI()
           .HSET(login_id, 'online', "1")
