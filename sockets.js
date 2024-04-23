@@ -85,6 +85,10 @@ exports.initsocket = (server) => {
           .HSET('user_socket', socket_id, login_id)
           .EXEC();
           data = await redisClient.HGETALL(login_id);
+
+          socket.emit('get_user', data);
+
+          return;
       }
 
       if (!data['online']) {
