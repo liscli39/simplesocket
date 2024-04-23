@@ -48,11 +48,29 @@ exports.initsocket = (server) => {
       }
       console.log(`disconnect from: ${ipAddress} - title id: ${result}`);
 
+
+      const key = `user_socketArray:${login_id}`;
+      try {
+
+        redisClient.delete(key);
+      } catch (error) {
+        console.error(error);
+      }
       await redisClient.HSET(result, 'online', '0');
     });
 
 
     socket.on('end_login', async () => {
+
+      const key = `user_socketArray:${login_id}`;
+      try {
+
+        redisClient.delete(key);
+      } catch (error) {
+        console.error(error);
+      }
+
+
       const ipAddress = socket.handshake.address;
 
       const result = await redisClient.HGET('user_socket', socket_id).catch(err => {
@@ -75,59 +93,34 @@ exports.initsocket = (server) => {
 
     socket.on('get_user', async (login_id) => {
       var data = await redisClient.HGETALL(login_id);
-      // var user_socketArray = redisClient.get("user_socketArray");
 
-      // if (!user_socketArray.indexOf(socket_id) != -1) {
-      //     // user_socketArray.push(socket_id);
-      //     redisClient.a
-      // }
-       const key = `user_socketArray:${login_id}`;
-      console.log("kakasdadasdsadakaka");
+      const key = `user_socketArray:${login_id}`;
 
-      // await redisClient.exists(`user_socketArray:${login_id}`, function(err, reply) {
-      //   console.log("kakakaka");
-      //   if (reply === 1) {
-      //     console.log('Exists!');
-      //   } else {
-      //     console.log('Doesn\'t exist!');
-      //   }
-      // });
+      var titleIDArr = redisClient.lRange(key, 0, -1);
 
       try {
-        const result =    await redisClient.RPUSH(key, socket_id);
-        console.log(`user_socketArray:${login_id}`);
+        if (titleIDArr.indexOf(login_id) != -1) {
+          await redisClient.RPUSH(key, login_id);
 
-        // var arrayData = await redisClient.GET(`user_socketArray:${login_id}`);
-        // console.log(arrayData);
+          var titleIDArr = redisClient.lRange(key, 0, -1);
+          if (titleIDArr.length > 1) {
+            await redisClient.MULTI()
+              .HSET(login_id, 'online', "1")
+              .HSET(login_id, 'socket_id', socket_id)
+              .HSET('user_socket', socket_id, login_id)
+              .EXEC();
+            data = await redisClient.HGETALL(login_id);
 
-    } catch (error) {
+            socket.emit('get_user', data);
+
+            return;
+
+          }
+
+        }
+      } catch (error) {
         console.error(error);
-    }
-
-    try {
-      const result2 = await redisClient.lRange(key, 0, -1);
-      result2.forEach(v => console.log(v));
-  } catch (error) {
-      console.error(error);
-  }
-
-      // console.log(`user_socketArray length ${user_socketArray}`);
-      // console.log(`user_socketArray count ${user_socketArray.length}`);
-
-      // if (user_socketArray.length > 1) {
-      //   console.log(`duplicate login ${user_socketArray}`);
-
-      //   await redisClient.MULTI()
-      //     .HSET(login_id, 'online', "1")
-      //     .HSET(login_id, 'socket_id', socket_id)
-      //     .HSET('user_socket', socket_id, login_id)
-      //     .EXEC();
-      //     data = await redisClient.HGETALL(login_id);
-
-      //     socket.emit('get_user', data);
-
-      //     return;
-      // }
+      }
 
       if (!data['online']) {
 
