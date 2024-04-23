@@ -49,10 +49,10 @@ exports.initsocket = (server) => {
       console.log(`disconnect from: ${ipAddress} - title id: ${result}`);
 
 
-      const key = `user_socketArray:${login_id}`;
+      const key = `user_socketArray:${result}`;
       try {
 
-        redisClient.delete(key);
+       await redisClient.delete(key);
       } catch (error) {
         console.error(error);
       }
@@ -62,13 +62,6 @@ exports.initsocket = (server) => {
 
     socket.on('end_login', async () => {
 
-      const key = `user_socketArray:${login_id}`;
-      try {
-
-        redisClient.delete(key);
-      } catch (error) {
-        console.error(error);
-      }
 
 
       const ipAddress = socket.handshake.address;
@@ -76,6 +69,15 @@ exports.initsocket = (server) => {
       const result = await redisClient.HGET('user_socket', socket_id).catch(err => {
 
       });
+
+
+      const key = `user_socketArray:${result}`;
+      try {
+
+        await  redisClient.delete(key);
+      } catch (error) {
+        console.error(error);
+      }
       if (result == null) {
         return;
       }
