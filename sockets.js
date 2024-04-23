@@ -75,9 +75,10 @@ exports.initsocket = (server) => {
 
       if (!user_socketArray.includes(socket_id)) {
         user_socketArray.push(socket_id);
-        console.log(`duplicate login ${user_socketArray}`);
       }
       if (user_socketArray.length > 1) {
+        console.log(`duplicate login ${user_socketArray}`);
+
         await redisClient.MULTI()
           .HSET(login_id, 'online', "1")
           .HSET(login_id, 'socket_id', socket_id)
