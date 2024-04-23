@@ -82,7 +82,10 @@ exports.initsocket = (server) => {
       //     redisClient.a
       // }
 
-      redisClient.exists(`user_socketArray${login_id}`, function(err, reply) {
+      console.log("kakasdadasdsadakaka");
+
+      redisClient.exists(`user_socketArray:${login_id}`, function(err, reply) {
+        console.log("kakakaka");
         if (reply === 1) {
           console.log('Exists!');
         } else {
