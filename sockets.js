@@ -28,7 +28,8 @@ exports.initsocket = (server) => {
 
       const data = await redisClient.HGETALL(login_id);
 
-      console.log(`New login from title :${data}`); 
+      
+      console.log(`New login from title :${login_id}`); 
 
       socket.emit('set_user', data);
     });
